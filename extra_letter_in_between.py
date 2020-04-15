@@ -66,7 +66,7 @@ if word_pairs != []:
 else:
     print('Checked {} words, didn\'t find any pairs.'.format(all_words_checked))
 
-# writting output file:
+# writing output file:
 output_path = os.path.join(output_dir, output_file)
 print('writing pairs into: {}'.format(output_path))
 
@@ -75,4 +75,4 @@ with open(output_path, 'w') as f:
     for pair in word_pairs:
         writer.writerow(pair)
 
-print('writting output in file {} is done.'.format(output_path))
+print('writing output in file {} is done.'.format(output_path))

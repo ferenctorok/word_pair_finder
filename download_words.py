@@ -73,7 +73,7 @@ def write_words_to_files(word_list, data_dir='words', letter='a', lengths=[]):
             writer = csv.writer(f, delimiter=',')
             writer.writerow(words_of_length)    
 
-    print('Writting the words with \'{}\' and lengths {} is done.'.format(letter, lengths))
+    print('writing the words with \'{}\' and lengths {} is done.'.format(letter, lengths))
 
 
 def download_words_from_wiki(wiki_link='https://hu.wiktionary.org/wiki/Index:Magyar',
