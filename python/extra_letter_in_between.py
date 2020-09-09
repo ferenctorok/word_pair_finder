@@ -19,9 +19,9 @@ args = parser.parse_args()
 
 length = int(args.length)
 
-words_dir_short = 'words/' + args.length
-words_dir_long = 'words/' + str(length + 1)
-output_dir = 'output/extra_letter_in_between'
+words_dir_short = os.path.join('..', 'words', str(args.length))
+words_dir_long = os.path.join('..', 'words', str(length + 1))
+output_dir = os.path.join('output', 'extra_letter_in_between')
 output_file = args.length + '.csv'
 
 if not os.path.exists(output_dir):

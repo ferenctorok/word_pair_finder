@@ -31,6 +31,23 @@ def get_shortened_list_by_index(long_list, index):
 
     return shortened_list
 
+
+def create_mutants(word, length):
+    mutants = []
+
+    for i in range(length - 1):
+        # creating a mutant with switched letters:
+        mutant = list(word)
+        mutant[i] = word[i + 1]
+        mutant[i + 1] = word[i]
+        mutant = ''.join(mutant)
+
+        # if the mutant is different from the original word it is added to the list:
+        if mutant != word:
+            mutants.append(mutant)
+    
+    return mutants
+
 class SearchTreeNode:
     """A node for easier search through words with search tree techniques.
     
