@@ -1,0 +1,8 @@
+**/output/**
+**/words/**
+
+# python
+**/__pycache__/**
+python/conda_env
+
+

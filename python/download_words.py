@@ -11,11 +11,11 @@ from argparse import ArgumentParser
 WIKI_URL = 'https://hu.wiktionary.org/wiki/Index:Magyar'
 ABC = ['a', 'b', 'c', 'cs', 'd', 'dz', 'dzs', 'e', 'é', 'f', 'g', 'gy', 'h', 'i', 'j', 'k', 'l', 'ly', 'm', 'o', 'ö', 'ő',
         'p', 'q', 'r', 's', 'sz', 't', 'ty', 'u', 'ú', 'ü', 'v', 'w', 'x', 'y', 'z', 'zs']
-LENGTHS = [2, 3]
-DATA_DIR = 'words'
+LENGTHS = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+DATA_DIR = os.path.join('..', 'words')
 
 
-def get_words_from_link(url, html_dir='words/html', html_file='html.txt'):
+def get_words_from_link(url, html_dir='../words/html', html_file='html.txt'):
     """This function downloads the html of a wiktionary page and extracts the words from it."""
     
     # creating the directory if it does not exist:
