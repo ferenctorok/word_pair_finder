@@ -5,9 +5,16 @@ import tkinter as tk
 import os
 
 
-if __name__ == "__main__":
-    OUTROOTDIR = os.path.join("output", "contains_only_letters")
-    WORDSDIR = os.path.join("words")
+OUTROOTDIR = os.path.join("output", "contains_only_letters")
+WORDSDIR = os.path.join("words")
+ABC = [
+    'a', 'á', 'b', 'c', 'cs', 'd', 'dz', 'dzs', 'e', 'é', 'f', 'g', 'gy', 'h', 'i', 'í', 'j', 'k', 'l', 'ly', 'm', 'n',
+    'ny', 'o', 'ó', 'ö', 'ő', 'p', 'q', 'r', 's', 'sz', 't', 'ty', 'u', 'ú', 'ü', 'ű', 'v', 'w', 'x', 'y', 'z', 'zs'
+]
+
+# Some of the words starting with a letter, like á, are in a different file (a).
+# This is why this dict is needed:
+LETTER_PAIRS = {'a': 'á', 'i': 'í', 'o': 'ó', 'ü': 'ű'}
 
 
 class GUI:
@@ -17,31 +24,61 @@ class GUI:
         """creates the gui for the application."""
 
         self._window = tk.Tk()
+        self._window.title("Szó kereső")
 
-        self._label = tk.Label(text="Add meg a betűket szóközzel elválasztva!")
-        self._label.pack()
+        self._label = tk.Label(text="Pipáld ki, melyik betűk lehetnek a szavakban!")
+        self._label.grid(row=0, column = 0, columnspan=7)
 
-        self._textIn = tk.Entry()
-        self._textIn.pack()
+        self._checkBoxes = self._setUpCheckboxes()
 
-        self._checkState = tk.IntVar()
+        self._everyLetterState = tk.IntVar()
         self._check = tk.Checkbutton(
             text="Tartalmazzák az összes betűt",
-            variable=self._checkState
+            variable=self._everyLetterState
         )
-        self._check.pack()
+        self._check.grid(row=9, column=0, columnspan=7)
 
         self._button = tk.Button(text="Keresés")
         self._button.bind("<Button-1>", self._buttonEventHandler)
-        self._button.pack()
+        self._button.grid(row=10, column=0, columnspan=7)
 
         self._window.mainloop()
 
+    def _setUpCheckboxes(self) -> dict:
+        """Sets up the checkboxes."""
+
+        checkBoxes = {}
+        colCounter = 0
+        rowCounter = 1
+        for letter in ABC:
+            var = tk.IntVar()
+            box = tk.Checkbutton(text=letter, variable=var)
+            box.grid(row=rowCounter, column=colCounter)
+            checkBoxes.update({box: (var, letter)})
+
+            colCounter += 1
+            if colCounter >= 7:
+                colCounter = 0
+                rowCounter += 1
+        
+        return checkBoxes
+
+    def _getLettersFromCheckBoxes(self) -> list:
+        """returns the list of letters which were ticked in in the checkboxes."""
+
+        letters = []
+        for (val, letter) in self._checkBoxes.values():
+            if val.get():
+                letters.append(letter)
+
+        return letters
+
     def _buttonEventHandler(self, event):
         """Handles the event when the button is pushed."""
-        lettersList = self._textIn.get().split()
+        # lettersList = self._textIn.get().split()
+        lettersList = self._getLettersFromCheckBoxes()
 
-        if (self._checkState.get()):
+        if (self._everyLetterState.get()):
             searchWordsEveryLetter(lettersList)
         else:
             searchWordsSimple(lettersList)
@@ -69,8 +106,13 @@ def searchWordsEveryLetter(letters):
 
         for fileName in os.listdir(currentInDir):
             initLetter = fileName.split('.')[0]
-            if initLetter not in letters:
-                continue
+
+            if (initLetter not in letters):
+                if (initLetter in list(LETTER_PAIRS.keys())):
+                    if (LETTER_PAIRS[initLetter] not in letters):
+                        continue
+                else:
+                    continue
 
             wordList = read_words_from_file(currentInDir, fileName)
             goodWords = []
@@ -118,8 +160,13 @@ def searchWordsSimple(letters):
 
         for fileName in os.listdir(currentInDir):
             initLetter = fileName.split('.')[0]
-            if initLetter not in letters:
-                continue
+
+            if (initLetter not in letters):
+                if (initLetter in list(LETTER_PAIRS.keys())):
+                    if (LETTER_PAIRS[initLetter] not in letters):
+                        continue
+                else:
+                    continue
 
             wordList = read_words_from_file(currentInDir, fileName)
             goodWords = []

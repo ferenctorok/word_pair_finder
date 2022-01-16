@@ -9,8 +9,10 @@ from argparse import ArgumentParser
 
 # some global variables:
 WIKI_URL = 'https://hu.wiktionary.org/wiki/Index:Magyar'
-ABC = ['a', 'b', 'c', 'cs', 'd', 'dz', 'dzs', 'e', 'é', 'f', 'g', 'gy', 'h', 'i', 'j', 'k', 'l', 'ly', 'm', 'o', 'ö', 'ő',
-        'p', 'q', 'r', 's', 'sz', 't', 'ty', 'u', 'ú', 'ü', 'v', 'w', 'x', 'y', 'z', 'zs']
+ABC = [
+    'a', 'b', 'c', 'cs', 'd', 'dz', 'dzs', 'e', 'é', 'f', 'g', 'gy', 'h', 'i', 'j', 'k', 'l', 'ly', 'm', 'n',
+    'ny', 'o', 'ö', 'ő', 'p', 'q', 'r', 's', 'sz', 't', 'ty', 'u', 'ú', 'ü', 'v', 'w', 'x', 'y', 'z', 'zs'
+]
 LENGTHS = [2, 3, 4, 5, 6, 7, 8, 9, 10]
 DATA_DIR = os.path.join('..', 'words')
 

@@ -3,3 +3,4 @@ jupyter
 beautifulsoup4
 argparse
 urllib3
+pyinstaller
