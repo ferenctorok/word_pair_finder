@@ -8,4 +8,7 @@ dist/
 **/.ipynb_checkpoints/**
 venv
 
+# pyinstaller
+**/*.spec
+
 

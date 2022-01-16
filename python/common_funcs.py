@@ -6,7 +6,7 @@ import queue
 def read_words_from_file(words_dir, file_name):
     file_path = os.path.join(words_dir, file_name)
     if os.path.exists(file_path):
-        with open(file_path, 'r') as f:
+        with open(file_path, 'r', encoding="utf8") as f:
             reader = csv.reader(f, delimiter=',')
             word_list = list(reader)[0][:]
     else:

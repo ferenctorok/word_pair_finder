@@ -113,7 +113,7 @@ def searchWordsEveryLetter(letters):
                         continue
                 else:
                     continue
-
+                    
             wordList = read_words_from_file(currentInDir, fileName)
             goodWords = []
 
@@ -133,8 +133,8 @@ def searchWordsEveryLetter(letters):
                     goodWords.append(word)
 
             if goodWords:
-                outFile = os.path.join(currentOutDir, fileName)
-                with open(outFile, 'w') as fp:
+                outFile = os.path.join(currentOutDir, initLetter + ".txt")
+                with open(outFile, 'w', encoding="utf8") as fp:
                     for word in goodWords:
                         fp.writelines(word + "\n")
 
@@ -176,8 +176,8 @@ def searchWordsSimple(letters):
                     goodWords.append(word)
 
             if goodWords:
-                outFile = os.path.join(currentOutDir, fileName)
-                with open(outFile, 'w') as fp:
+                outFile = os.path.join(currentOutDir, initLetter + ".txt")
+                with open(outFile, 'w', encoding="utf8") as fp:
                     for word in goodWords:
                         fp.writelines(word  + "\n")
 

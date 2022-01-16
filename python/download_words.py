@@ -14,7 +14,7 @@ ABC = [
     'ny', 'o', 'ö', 'ő', 'p', 'q', 'r', 's', 'sz', 't', 'ty', 'u', 'ú', 'ü', 'v', 'w', 'x', 'y', 'z', 'zs'
 ]
 LENGTHS = [2, 3, 4, 5, 6, 7, 8, 9, 10]
-DATA_DIR = os.path.join('..', 'words')
+DATA_DIR = 'words'
 
 
 def get_words_from_link(url, html_dir='../words/html', html_file='html.txt'):
@@ -28,7 +28,7 @@ def get_words_from_link(url, html_dir='../words/html', html_file='html.txt'):
     urllib.request.urlretrieve(url, os.path.join(html_dir, html_file))
     
     # parsing the html:
-    with open(os.path.join(html_dir, html_file)) as f:
+    with open(os.path.join(html_dir, html_file), encoding="utf8") as f:
         soup = BeautifulSoup(f.read())
     
     # deleting the text file
@@ -46,7 +46,7 @@ def get_words_from_link(url, html_dir='../words/html', html_file='html.txt'):
     word_list = []
     for line in a_tags:
         word_list.append(line.text)
-        
+    
     return word_list    
 
 
@@ -71,7 +71,7 @@ def write_words_to_files(word_list, data_dir='words', letter='a', lengths=[]):
 
         # writing the csv file:
         file_name = letter + '.csv'
-        with open(os.path.join(current_dir, file_name), 'w') as f:
+        with open(os.path.join(current_dir, file_name), 'w', encoding="utf8") as f:
             writer = csv.writer(f, delimiter=',')
             writer.writerow(words_of_length)    
 
@@ -98,6 +98,9 @@ def download_words_from_wiki(wiki_link='https://hu.wiktionary.org/wiki/Index:Mag
         # downloading the words starting with letter:
         html_dir = os.path.join(data_dir, 'html')
         word_list = get_words_from_link(url=actual_url, html_dir=html_dir, html_file='html.txt')
+        
+        # deleting the html folder:
+        os.rmdir(html_dir)
 
         # saving the words with specified lengths:
         write_words_to_files(word_list=word_list, data_dir=data_dir, letter=letter, lengths=lengths)
