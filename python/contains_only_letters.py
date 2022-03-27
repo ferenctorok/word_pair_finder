@@ -79,30 +79,30 @@ class GUI:
         lettersList = self._getLettersFromCheckBoxes()
 
         if (self._everyLetterState.get()):
-            searchWordsEveryLetter(lettersList)
+            findWordsWithLetters(lettersList, mustContainEveryLetter=True)
         else:
-            searchWordsSimple(lettersList)
+            findWordsWithLetters(lettersList)
 
-def searchWordsEveryLetter(letters):
+def findWordsWithLetters(letters, mustContainEveryLetter=False):
     """Searches for words which contain only the letters given in
-    the list letters and contain all of them.
+    the list letters. If mustContainEveryLetter is true, the words should contain all of the letters.
 
     because of the letters which are written with multiple characters,
     it is not possible to use the set() method to check the correspondence.
     This is why rather for loops are used.
     """
-
-    longestString = max([len(s) for s in letters])
-
-    outDir = os.path.join(OUTROOTDIR, "_".join(letters) + "_every")
+    
+    outDirBasename = "_".join(letters) + "_every" if mustContainEveryLetter else "_".join(letters)
+    outDir = os.path.join(OUTROOTDIR, outDirBasename)
     if not os.path.exists(outDir):
         os.makedirs(outDir)
 
-    for inDir in os.listdir(WORDSDIR):
-        currentInDir = os.path.join(WORDSDIR, inDir)
-        currentOutDir = os.path.join(outDir, inDir)
-        if not os.path.exists(currentOutDir):
-            os.makedirs(currentOutDir)
+    longestString = max([len(s) for s in letters])
+
+    for wordLength in os.listdir(WORDSDIR):
+        currentInDir = os.path.join(WORDSDIR, wordLength)
+        
+        goodWords = []
 
         for fileName in os.listdir(currentInDir):
             initLetter = fileName.split('.')[0]
@@ -115,75 +115,28 @@ def searchWordsEveryLetter(letters):
                     continue
                     
             wordList = read_words_from_file(currentInDir, fileName)
-            goodWords = []
 
             for word in wordList:
                 okFlag = checkIfOnlyContainsAllowedChars(word, letters, longestString)
 
-                if not okFlag:
-                    continue
-                
-                # checking whether the word contains every letter:
-                for letter in letters:
-                    if letter not in word:
-                        okFlag = False
-                        break
+                if mustContainEveryLetter:
+                    if not okFlag:
+                        continue
+                    
+                    # checking whether the word contains every letter:
+                    for letter in letters:
+                        if letter not in word:
+                            okFlag = False
+                            break
                 
                 if okFlag:
                     goodWords.append(word)
 
-            if goodWords:
-                outFile = os.path.join(currentOutDir, initLetter + ".txt")
-                with open(outFile, 'w', encoding="utf8") as fp:
-                    for word in goodWords:
-                        fp.writelines(word + "\n")
-
-        # deleting the output dir if it does not contain anything:
-        if not os.listdir(currentOutDir):
-            os.rmdir(currentOutDir)
-
-
-def searchWordsSimple(letters):
-    """Searches for words which contain only letters given in letters"""
-
-    longestString = max([len(s) for s in letters])
-
-    outDir = os.path.join(OUTROOTDIR, "_".join(letters))
-    if not os.path.exists(outDir):
-        os.makedirs(outDir)
-
-    for inDir in os.listdir(WORDSDIR):
-        currentInDir = os.path.join(WORDSDIR, inDir)
-        currentOutDir = os.path.join(outDir, inDir)
-        if not os.path.exists(currentOutDir):
-            os.makedirs(currentOutDir)
-
-        for fileName in os.listdir(currentInDir):
-            initLetter = fileName.split('.')[0]
-
-            if (initLetter not in letters):
-                if (initLetter in list(LETTER_PAIRS.keys())):
-                    if (LETTER_PAIRS[initLetter] not in letters):
-                        continue
-                else:
-                    continue
-
-            wordList = read_words_from_file(currentInDir, fileName)
-            goodWords = []
-
-            for word in wordList:
-                if checkIfOnlyContainsAllowedChars(word, letters, longestString):
-                    goodWords.append(word)
-
-            if goodWords:
-                outFile = os.path.join(currentOutDir, initLetter + ".txt")
-                with open(outFile, 'w', encoding="utf8") as fp:
-                    for word in goodWords:
-                        fp.writelines(word  + "\n")
-
-        # deleting the output dir if it does not contain anything:
-        if not os.listdir(currentOutDir):
-            os.rmdir(currentOutDir)
+        if goodWords:
+            outFile = os.path.join(outDir, wordLength + ".txt")
+            with open(outFile, 'w', encoding="utf8") as fp:
+                for word in goodWords:
+                    fp.writelines(word + "\n")
 
 
 def checkIfOnlyContainsAllowedChars(word, letters, longestString):
@@ -211,7 +164,6 @@ def checkIfOnlyContainsAllowedChars(word, letters, longestString):
             break
     
     return okFlag
-
 
 
 if __name__ == "__main__":
