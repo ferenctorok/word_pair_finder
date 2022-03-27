@@ -165,6 +165,16 @@ class GUI:
 
         if (self._mixFileList):
             mixWords(self._mixFileList, self._mixOutPath)
+            
+            msgbox.showinfo(
+                title="Szó keverés sikeres!",
+                message="a megkevert szavak a {} fileba lettek mentve.".format(self._mixOutPath)
+            )
+        else:
+            msgbox.showerror(
+                title="Sikertelen keverés!",
+                message="Nincsen megadva file keverésre.".format(lettersList)
+            )
 
         # for releasing the button. Otherwise it remains pressed always.
         return "break"
@@ -178,7 +188,7 @@ class GUI:
         ))
 
         if not filenames:
-            return
+            return "break"
 
         text = "\n".join(filenames)
         self._mixInFileTextVariable.set(text)
@@ -196,7 +206,10 @@ class GUI:
             initialdir=self._mixOutDir,
             filetypes=[("Text Files", ".txt")]
         )
-
+        
+        if self._mixOutPath[-4:] != ".txt":
+            self._mixOutPath += ".txt"
+        
         self._mixOutFileTextVariable.set(self._mixOutPath)
 
         # for releasing the button. Otherwise it remains pressed always.
@@ -321,7 +334,7 @@ def mixWords(fileNameList: list, outFile: str = "") -> None:
         wordLength = int(fileBasename.split('.')[0])
         wordLengthList.append(wordLength)
 
-        with open(filePath, 'r') as fp:
+        with open(filePath, 'r', encoding="utf8") as fp:
             wordList += fp.read().splitlines()
 
     random.shuffle(wordList)
