@@ -3,7 +3,7 @@ import os.path
 import queue
 
 
-def read_words_from_file(words_dir, file_name):
+def read_words_from_file(words_dir: str, file_name: str) -> list:
     file_path = os.path.join(words_dir, file_name)
     if os.path.exists(file_path):
         with open(file_path, 'r', encoding="utf8") as f:
@@ -47,6 +47,13 @@ def create_mutants(word, length):
             mutants.append(mutant)
     
     return mutants
+
+def dump_words(wordList: list, fileName: str, encoding: str = "utf8") -> None:
+    """dumps the words in the list to the specified file line-wise."""
+
+    with open(fileName, 'w', encoding=encoding) as fp:
+        for word in wordList:
+            fp.writelines(word + "\n")
 
 class SearchTreeNode:
     """A node for easier search through words with search tree techniques.
