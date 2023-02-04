@@ -9,7 +9,7 @@ import random
 
 
 OUTROOTDIR = os.path.join("output", "contains_only_letters")
-WORDSDIR = os.path.join("words")
+WORDSDIR = "words"
 ABC = [
     'a', 'á', 'b', 'c', 'cs', 'd', 'dz', 'dzs', 'e', 'é', 'f', 'g', 'gy', 'h', 'i', 'í', 'j', 'k', 'l', 'ly', 'm', 'n',
     'ny', 'o', 'ó', 'ö', 'ő', 'p', 'q', 'r', 's', 'sz', 't', 'ty', 'u', 'ú', 'ü', 'ű', 'v', 'w', 'x', 'y', 'z', 'zs'
@@ -164,11 +164,26 @@ class GUI:
         """Handles the event when the mix button is pressed."""
 
         if (self._mixFileList):
-            mixWords(self._mixFileList, self._mixOutPath)
+            if not self._mixOutPath:
+                fileNameComponents = []
+                for filePath in self._mixFileList:
+                    fileBasename = os.path.basename(filePath)
+                    fileNameComponents.append(fileBasename.split('.')[0])
+                    
+                fileNameComponents.sort()
+                
+                currentDir = os.path.dirname(self._mixFileList[0])
+                outFileName = "mix_" + "_".join(fileNameComponents) + ".txt"
+                outPath = os.path.join(currentDir, outFileName)
+        
+            else:
+                outPath = self._mixOutPath
+            
+            mixWords(self._mixFileList, outPath)
             
             msgbox.showinfo(
                 title="Szó keverés sikeres!",
-                message="a megkevert szavak a {} fileba lettek mentve.".format(self._mixOutPath)
+                message="a megkevert szavak a {} fileba lettek mentve.".format(outPath)
             )
         else:
             msgbox.showerror(
@@ -202,15 +217,19 @@ class GUI:
     def _mixOutFileButtonEventHandler(self, event):
         """Handles the event when the file opening button is pressed."""
 
-        self._mixOutPath = fd.asksaveasfilename(
+        outPath = fd.asksaveasfilename(
             initialdir=self._mixOutDir,
             filetypes=[("Text Files", ".txt")]
         )
         
-        if self._mixOutPath[-4:] != ".txt":
-            self._mixOutPath += ".txt"
+        if not outPath:
+            return "break"
         
-        self._mixOutFileTextVariable.set(self._mixOutPath)
+        if outPath[-4:] != ".txt":
+            outPath += ".txt"
+        
+        self._mixOutFileTextVariable.set(outPath)
+        self._mixOutPath = outPath
 
         # for releasing the button. Otherwise it remains pressed always.
         return "break"
@@ -218,11 +237,15 @@ class GUI:
     def _searchOutFileButtonEventHandler(self, event):
         """Handles the event when the file opening button is pressed."""
 
-        self._searchOutDir = fd.askdirectory(
+        outDir = fd.askdirectory(
             initialdir=self._searchOutDir
         )
-
-        self._searchOutFileTextVariable.set(self._searchOutDir)
+        
+        if not outDir:
+            return "break"
+        
+        self._searchOutFileTextVariable.set(outDir)
+        self._searchOutDir = outDir
 
         # for releasing the button. Otherwise it remains pressed always.
         return "break"
@@ -324,26 +347,15 @@ def mixWords(fileNameList: list, outFile: str = "") -> None:
     args:
         filenames: [list], the list of files to read from.
     """
-
-    currentDir = os.path.dirname(fileNameList[0])
-    wordLengthList = []
+    
     wordList = []
 
     for filePath in fileNameList:
-        fileBasename = os.path.basename(filePath)
-        wordLength = int(fileBasename.split('.')[0])
-        wordLengthList.append(wordLength)
-
         with open(filePath, 'r', encoding="utf8") as fp:
             wordList += fp.read().splitlines()
-
+    
+    wordList = list(set((wordList)))
     random.shuffle(wordList)
-
-    if not outFile:
-        wordLengthList.sort()
-        outFileName = "mix_" + "_".join([str(length) for length in wordLengthList])
-        outFileBase = outFileName + ".txt"
-        outFile = os.path.join(currentDir, outFileBase)
 
     dump_words(wordList, outFile)
 
