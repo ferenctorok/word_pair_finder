@@ -13,6 +13,7 @@ ABC = [
     'a', 'b', 'c', 'cs', 'd', 'dz', 'dzs', 'e', 'é', 'f', 'g', 'gy', 'h', 'i', 'j', 'k', 'l', 'ly', 'm', 'n',
     'ny', 'o', 'ö', 'ő', 'p', 'q', 'r', 's', 'sz', 't', 'ty', 'u', 'ú', 'ü', 'v', 'w', 'x', 'y', 'z', 'zs'
 ]
+TWO_CHAR_LETTERS = ["cs", "dz", "gy", "ly", "ny", "sz", "ty", "zs"]
 LENGTHS = [2, 3, 4, 5, 6, 7, 8, 9, 10]
 DATA_DIR = 'words'
 
@@ -67,7 +68,7 @@ def write_words_to_files(word_list, data_dir='words', letter='a', lengths=[]):
             os.makedirs(current_dir)
         
         # extracting the words with length:
-        words_of_length = [word for word in word_list if len(word) == length]
+        words_of_length = [word for word in word_list if get_word_length(word) == length]
 
         # writing the csv file:
         file_name = letter + '.csv'
@@ -76,6 +77,17 @@ def write_words_to_files(word_list, data_dir='words', letter='a', lengths=[]):
             writer.writerow(words_of_length)    
 
     print('writing the words with \'{}\' and lengths {} is done.'.format(letter, lengths))
+
+def get_word_length(word: str) -> int:
+    """Returns the length of a word considering the multi-character long letters of the Hungarian ABC."""
+
+    # Note that "dzs" is not included in the TWO_CHAR_LETTERS list, so we don't count "dzs" explicitely.
+    # But actually we do count them inplicitely. Since "dzs" contains both "dz" and "zs" that we do count,
+    # If we substract the total two letter counts from the length of the word, we will end up exactly with the
+    # right count.
+    two_letter_counts = sum(map(lambda c: word.count(c), TWO_CHAR_LETTERS))
+    
+    return len(word) - two_letter_counts
 
 
 def download_words_from_wiki(wiki_link='https://hu.wiktionary.org/wiki/Index:Magyar',

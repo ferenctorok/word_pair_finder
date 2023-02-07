@@ -199,7 +199,7 @@ class GUI:
 
         filenames = list(fd.askopenfilenames(
             initialdir=self._mixOutDir,
-            filetypes=[("Text Files", ".txt")]
+            filetypes=[("Text Files", ".txt"), ("Comma Separated Values", ".csv")]
         ))
 
         if not filenames:
@@ -352,7 +352,8 @@ def mixWords(fileNameList: list, outFile: str = "") -> None:
 
     for filePath in fileNameList:
         with open(filePath, 'r', encoding="utf8") as fp:
-            wordList += fp.read().splitlines()
+            lines_list = fp.read().splitlines()
+            wordList += [word for line in lines_list for word in line.split(",")]
     
     wordList = list(set((wordList)))
     random.shuffle(wordList)
